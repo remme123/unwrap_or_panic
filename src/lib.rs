@@ -1,6 +1,18 @@
-#![cfg_attr(not(any(feature = "std", test)), no_std)]
+//! Unwrap a `Result<T, E>` without the trait bound `E: Debug` for the Error.
+//!
+//! Unlike [`unwrap`](https://doc.rust-lang.org/core/result/enum.Result.html#method.unwrap), this does not format the error with `fmt::Debug`.
+//!
+//! # Usage
+//! ```
+//! use unwrap_or_panic::UnwrapOrPanic
+//!
+//! Err(1).unwrap_or_panic();    // panic with msg `Panic at <FILE>:<LINE>:<COLUME>`
+//! ```
+
+#![cfg_attr(not(test), no_std)]
 
 pub trait UnwrapOrPanic<T> {
+    /// Return the contained value or panic
     #[track_caller]
     fn unwrap_or_panic(self) -> T;
 }
@@ -11,10 +23,8 @@ impl<T, E> UnwrapOrPanic<T> for Result<T, E> {
         if let Ok(x) = self {
             x
         } else {
-            // let caller = core::panic::Location::caller();
-            // let tx = unsafe {DEBUG_SERIAL_TX.get_mut().unwrap_or_panic()};
-            // uwriteln!(tx, "Panic @ {}:{}:{}", caller.file(), caller.line(), caller.column()).ok();
-            panic!();
+            let caller = core::panic::Location::caller();
+            panic!("Panic at {}:{}:{}", caller.file(), caller.line(), caller.column());
         }
     }
 }
@@ -25,10 +35,8 @@ impl<T> UnwrapOrPanic<T> for Option<T> {
         if let Some(x) = self {
             x
         } else {
-            // let caller = core::panic::Location::caller();
-            // let tx = unsafe {DEBUG_SERIAL_TX.get_mut().unwrap_or_panic()};
-            // uwriteln!(tx, "Panic @ {}:{}:{}", caller.file(), caller.line(), caller.column()).ok();
-            panic!();
+            let caller = core::panic::Location::caller();
+            panic!("Panic at {}:{}:{}", caller.file(), caller.line(), caller.column());
         }
     }
 }
