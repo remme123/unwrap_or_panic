@@ -3,10 +3,10 @@
 //! Unlike [`unwrap`](https://doc.rust-lang.org/core/result/enum.Result.html#method.unwrap), this does not format the error with `fmt::Debug`.
 //!
 //! # Usage
-//! ```
-//! use unwrap_or_panic::UnwrapOrPanic
+//! ```should_panic
+//! use unwrap_or_panic::UnwrapOrPanic;
 //!
-//! Err(1).unwrap_or_panic();    // panic with msg `Panic at <FILE>:<LINE>:<COLUME>`
+//! Err::<i32, i32>(-1).unwrap_or_panic();    // panic with msg `Panic at <FILE>:<LINE>:<COLUME>`
 //! ```
 
 #![cfg_attr(not(test), no_std)]
@@ -23,8 +23,15 @@ impl<T, E> UnwrapOrPanic<T> for Result<T, E> {
         if let Ok(x) = self {
             x
         } else {
-            let caller = core::panic::Location::caller();
-            panic!("Panic at {}:{}:{}", caller.file(), caller.line(), caller.column());
+            #[cfg(not(feature = "panic_location"))]
+            {
+                panic!();
+            }
+            #[cfg(feature = "panic_location")]
+            {
+                let caller = core::panic::Location::caller();
+                panic!("paniced at {}:{}:{}", caller.file(), caller.line(), caller.column());
+            }
         }
     }
 }
@@ -35,8 +42,15 @@ impl<T> UnwrapOrPanic<T> for Option<T> {
         if let Some(x) = self {
             x
         } else {
-            let caller = core::panic::Location::caller();
-            panic!("Panic at {}:{}:{}", caller.file(), caller.line(), caller.column());
+            #[cfg(not(feature = "panic_location"))]
+            {
+                panic!();
+            }
+            #[cfg(feature = "panic_location")]
+            {
+                let caller = core::panic::Location::caller();
+                panic!("paniced at {}:{}:{}", caller.file(), caller.line(), caller.column());
+            }
         }
     }
 }
@@ -46,6 +60,13 @@ mod tests {
     use super::*;
 
     #[test]
-    fn it_works() {
+    fn unwrap_ok() {
+        assert_eq!(Ok::<i32, i32>(1).unwrap_or_panic(), 1);
+    }
+
+    #[test]
+    #[should_panic]
+    fn unwrap_err() {
+        Err::<i32, i32>(-1).unwrap_or_panic();
     }
 }
