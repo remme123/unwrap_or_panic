@@ -1,6 +1,7 @@
 //! Unwrap a `Result<T, E>` without the trait bound `E: Debug` for the Error.
 //!
-//! Unlike [`unwrap`](https://doc.rust-lang.org/core/result/enum.Result.html#method.unwrap), this does not format the error with `fmt::Debug`.
+//! Unlike [`unwrap`](https://doc.rust-lang.org/core/result/enum.Result.html#method.unwrap),
+//! this does not format the error with `fmt::Debug`.
 //!
 //! # Usage
 //! ```should_panic
