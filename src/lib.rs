@@ -14,12 +14,12 @@
 
 pub trait UnwrapOrPanic<T> {
     /// Return the contained value or panic
-    #[track_caller]
+    #[cfg_attr(feature = "track_caller", track_caller)]
     fn unwrap_or_panic(self) -> T;
 }
 
 impl<T, E> UnwrapOrPanic<T> for Result<T, E> {
-    #[inline(never)]
+    #[cfg_attr(feature = "track_caller", inline(never))]
     fn unwrap_or_panic(self) -> T {
         if let Ok(x) = self {
             x
@@ -38,7 +38,7 @@ impl<T, E> UnwrapOrPanic<T> for Result<T, E> {
 }
 
 impl<T> UnwrapOrPanic<T> for Option<T> {
-    #[inline(never)]
+    #[cfg_attr(feature = "track_caller", inline(never))]
     fn unwrap_or_panic(self) -> T {
         if let Some(x) = self {
             x
