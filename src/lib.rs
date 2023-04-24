@@ -19,39 +19,23 @@ pub trait UnwrapOrPanic<T> {
 }
 
 impl<T, E> UnwrapOrPanic<T> for Result<T, E> {
-    #[cfg_attr(feature = "track_caller", inline(never))]
+    #[inline]
     fn unwrap_or_panic(self) -> T {
         if let Ok(x) = self {
             x
         } else {
-            #[cfg(not(feature = "panic_location"))]
-            {
-                panic!();
-            }
-            #[cfg(feature = "panic_location")]
-            {
-                let caller = core::panic::Location::caller();
-                panic!("paniced at {}:{}:{}", caller.file(), caller.line(), caller.column());
-            }
+            panic!("unwrapped an `Err`");
         }
     }
 }
 
 impl<T> UnwrapOrPanic<T> for Option<T> {
-    #[cfg_attr(feature = "track_caller", inline(never))]
+    #[inline]
     fn unwrap_or_panic(self) -> T {
         if let Some(x) = self {
             x
         } else {
-            #[cfg(not(feature = "panic_location"))]
-            {
-                panic!();
-            }
-            #[cfg(feature = "panic_location")]
-            {
-                let caller = core::panic::Location::caller();
-                panic!("paniced at {}:{}:{}", caller.file(), caller.line(), caller.column());
-            }
+            panic!("unwrapped a `None`");
         }
     }
 }

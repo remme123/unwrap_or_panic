@@ -1,6 +1,6 @@
 [package]
 name = "unwrap_or_panic"
-version = "0.2.2"
+version = "0.2.3"
 edition = "2021"
 license = "MIT OR Apache-2.0"
 description = "Unwrap a `Result<T, E>` without formating the Error `E` and no trait bound `E: Debug`"
@@ -12,6 +12,6 @@ documentation = "https://docs.rs/unwrap_or_panic"
 [dependencies]
 
 [features]
-default = ["panic_location", "track_caller"]
+default = ["track_caller"]
 panic_location = []
 track_caller = []
