@@ -19,7 +19,7 @@ pub trait UnwrapOrPanic<T> {
 }
 
 impl<T, E> UnwrapOrPanic<T> for Result<T, E> {
-    #[inline]
+    #[cfg_attr(feature = "never_inline", inline(never))]
     fn unwrap_or_panic(self) -> T {
         if let Ok(x) = self {
             x
@@ -30,7 +30,7 @@ impl<T, E> UnwrapOrPanic<T> for Result<T, E> {
 }
 
 impl<T> UnwrapOrPanic<T> for Option<T> {
-    #[inline]
+    #[cfg_attr(feature = "never_inline", inline(never))]
     fn unwrap_or_panic(self) -> T {
         if let Some(x) = self {
             x
